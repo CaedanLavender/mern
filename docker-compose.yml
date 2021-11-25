@@ -1,0 +1,47 @@
+version: "3"
+services:
+  # REACT APP ////////////////////////////////
+  react-app:
+    image: react-app
+    build: ./client
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    networks:
+      - mern-app
+    volumes:
+      - ./client/:/usr/src/app
+      - /usr/src/app/node_modules
+
+  # SERVER ////////////////////////////////
+  api-server:
+    image: api-server
+    build: ./server
+    stdin_open: true
+    ports:
+      - "5000:5000"
+    networks:
+      - mern-app
+    volumes:
+      - ./server/:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+
+  # MONGODB ////////////////////////////////
+  mongo:
+    image: mongo:4.4-bionic
+    ports:
+      - "27017:27017"
+    networks:
+      - mern-app
+    volumes:
+      - mongo-data:/data/db
+
+networks:
+  mern-app:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
